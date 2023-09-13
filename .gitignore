@@ -1,0 +1,7 @@
+# Local files
+.vscode/
+.local/
+
+# Build and measurement files
+*.pcapng
+*.hex
