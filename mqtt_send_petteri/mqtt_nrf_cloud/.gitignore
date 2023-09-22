@@ -1,0 +1,11 @@
+# editors
+*.swp
+*~
+
+# build
+/build*/
+/build_debug*/
+
+
+.vscode/
+
