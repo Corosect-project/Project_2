@@ -88,7 +88,7 @@ int send_message(char *msg, char *topic) {
   param.message.payload.data = msg;
   param.message.payload.len = strlen(msg);
   param.message.topic.qos = MQTT_QOS_0_AT_MOST_ONCE;
-  param.message.topic.topic.utf8 = &topic;
+  param.message.topic.topic.utf8 = topic;
   param.message.topic.topic.size = strlen(topic);
   return mqtt_publish(&client_ctx, &param);
 }
