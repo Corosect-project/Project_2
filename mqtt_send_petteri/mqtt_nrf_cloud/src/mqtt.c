@@ -1,6 +1,9 @@
 #include "mqtt.h"
 #include <stdio.h>
 #include <zephyr/logging/log.h>
+
+#include <net/nrf_cloud.h>
+
 LOG_MODULE_DECLARE(app, LOG_LEVEL_DBG);
 
 // MQTT global variables
@@ -27,6 +30,9 @@ void mqtt_evt_handler(struct mqtt_client *client, const struct mqtt_evt *evt);
  * @return Pointer to the client struct or NULL on failure
  */
 struct mqtt_client *init_mqtt(const char *server_ip, uint32_t port) {
+
+  nrfcloud_initialize(); //Initializing nrf cloud
+
   uint32_t err;
 
   uint8_t *client_id = "ZEPHYR";
@@ -115,4 +121,20 @@ void mqtt_evt_handler(struct mqtt_client *client, const struct mqtt_evt *evt) {
       LOG_INF("MQTT default");
       break;
   }
+}
+
+
+void nrfcloud_initialize(){
+
+
+  const struct nrf_cloud_init_param *nrf_init_mqtt{   
+    nrf_cloud_event_handler_t event_handler;
+
+
+  };
+  
+  nrf_cloud_init(nrf_init_mqtt);
+
+  
+
 }
