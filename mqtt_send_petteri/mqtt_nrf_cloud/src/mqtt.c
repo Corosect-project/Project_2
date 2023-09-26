@@ -31,8 +31,6 @@ void mqtt_evt_handler(struct mqtt_client *client, const struct mqtt_evt *evt);
  */
 struct mqtt_client *init_mqtt(const char *server_ip, uint32_t port) {
 
-  nrfcloud_initialize(); //Initializing nrf cloud
-
   uint32_t err;
 
   uint8_t *client_id = "ZEPHYR";
@@ -124,17 +122,19 @@ void mqtt_evt_handler(struct mqtt_client *client, const struct mqtt_evt *evt) {
 }
 
 
-void nrfcloud_initialize(){
+void initializer_nrf_cloud(){ //Initalize data
 
-
-  const struct nrf_cloud_init_param *nrf_init_mqtt{   
-    nrf_cloud_event_handler_t event_handler;
-
+  const struct nrf_cloud_init_param * nrf_mqtt{   
+    nrf_cloud_event_handler_t * event_handler;
+    char * client_id = "";
 
   };
-  
-  nrf_cloud_init(nrf_init_mqtt);
 
-  
+  int error = nrf_cloud_init(nrf_mqtt);
+
+  if(error != 0 ){
+    LOG_ERR("Error in nrf cloud init: %d", error);
+
+  }
 
 }
