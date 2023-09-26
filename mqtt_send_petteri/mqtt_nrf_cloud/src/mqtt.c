@@ -122,18 +122,19 @@ void mqtt_evt_handler(struct mqtt_client *client, const struct mqtt_evt *evt) {
 }
 
 
-void initializer_nrf_cloud(){ //Initalize data
+void initializer_nrf_cloud(){ //Initialize data for nrf_cloud
 
-  const struct nrf_cloud_init_param * nrf_mqtt{   
-    nrf_cloud_event_handler_t * event_handler;
-    char * client_id = "";
+  const struct nrf_cloud_init_param *nrf_ble_cloud = { };
+  nrf_ble_cloud->event_handler = "Test";
+  nrf_ble_cloud->client_id = NULL;
 
-  };
+  //Initalizing nrf cloud connection
+  int error = nrf_cloud_init(nrf_ble_cloud);
 
-  int error = nrf_cloud_init(nrf_mqtt);
-
+  
+  //Testing if initializing returns error
   if(error != 0 ){
-    LOG_ERR("Error in nrf cloud init: %d", error);
+    LOG_ERR("Error in initializing of nrf cloud: %d", error);
 
   }
 

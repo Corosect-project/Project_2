@@ -58,7 +58,7 @@ void main(void) {
   LOG_DBG("Continuing");
   init_network(ZEPHYR_ADDR);
   
-  
+  initializer_nrf_cloud();
   struct mqtt_client *client_ctx = init_mqtt(SERVER_ADDR, SERVER_PORT);
 
   for (size_t i = 0; i < 11; i++) {
