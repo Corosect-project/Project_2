@@ -17,7 +17,8 @@ static struct mqtt_client client_ctx;
 static struct sockaddr_storage broker;
 
 
-
+//Nrf cloud struct usage
+const struct nrf_cloud_init_param *Nrf_ble_cloud;
 
 
 void mqtt_evt_handler(struct mqtt_client *client, const struct mqtt_evt *evt);
@@ -122,20 +123,23 @@ void mqtt_evt_handler(struct mqtt_client *client, const struct mqtt_evt *evt) {
 }
 
 
+
+
 void initializer_nrf_cloud(){ //Initialize data for nrf_cloud
 
-  const struct nrf_cloud_init_param *nrf_ble_cloud = { };
-  nrf_ble_cloud->event_handler = "Test";
-  nrf_ble_cloud->client_id = NULL;
+  Nrf_ble_cloud->client_id = "Test";
+
+  //nrf_ble_cloud->
+
+  //const struct Nrf_ble_cloud2 *nrf_ble_cloud_final;
 
   //Initalizing nrf cloud connection
-  int error = nrf_cloud_init(nrf_ble_cloud);
+  int error = nrf_cloud_init(Nrf_ble_cloud);
 
   
   //Testing if initializing returns error
-  if(error != 0 ){
-    LOG_ERR("Error in initializing of nrf cloud: %d", error);
+  if(error != 0 ) LOG_ERR("Error in initializing of nrf cloud: %d", error);
 
-  }
+  
 
 }
