@@ -34,6 +34,16 @@ class Firebase:
         ref = db.reference(path=data_path)
         ref.set(data)
 
+    def push(self, data: dict | str, data_path='/'):
+        ref = db.reference(path=data_path)
+        ref.push().set(data)
 
-firebase = Firebase()
-firebase.send({'timestamp': 0}, data_path='/temp')
+
+FirebaseTimestamp = {'.sv': 'timestamp'}
+
+# firebase = Firebase()
+# firebase.send({'timestamp': {'.sv': 'timestamp'}}, data_path='/last_update')
+# firebase.push({
+#     'test': 'Hello world',
+#     'timestamp': {'.sv': 'timestamp'}
+# }, data_path='/push/test')
