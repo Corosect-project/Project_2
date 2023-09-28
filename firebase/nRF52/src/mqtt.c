@@ -65,10 +65,10 @@ struct mqtt_client *init_mqtt(const char *server_ip, uint32_t port) {
  * @param topic MQTT topic
  * @return 0 or negative error code (Zephyr errno.h)
  */
-int send_message(char *msg, char *topic) {
+int send_message(void *msg, size_t msg_len, char *topic) {
   struct mqtt_publish_param param = {0};
   param.message.payload.data = msg;
-  param.message.payload.len = strlen(msg);
+  param.message.payload.len = msg_len;
   param.message.topic.qos = MQTT_QOS_0_AT_MOST_ONCE;
   param.message.topic.topic.utf8 = topic;
   param.message.topic.topic.size = strlen(topic);

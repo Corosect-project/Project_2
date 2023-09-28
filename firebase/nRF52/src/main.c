@@ -79,11 +79,13 @@ void main(void) {
   if (connected) {
     uint8_t *message = "Hello world from Zephyr";
     uint8_t *topic = "TEST";
-    err = send_message(message, topic);
+    err = send_message(message, strlen(message), topic);
     if (err) LOG_ERR("SEND ERROR: %d", err);
   }
 
+  int test = 0;
   while (!quit && connected) {
+    LOG_DBG("WAITING");
     err = zsock_poll(fds, 1, 5000);
     if (err > 0) {
       if (fds[0].revents & ZSOCK_POLLIN) {
@@ -91,10 +93,11 @@ void main(void) {
         LOG_ERR("%d", err);
       }
     } else if (ERROR(err)) LOG_ERR("%d", errno);
+    send_message(&test, sizeof(int), "TEST");
+    test++;
+
     err = mqtt_live(client_ctx);
-    LOG_ERR("%d", err);
-    LOG_DBG("WAITING");
-    k_sleep(K_MSEC(2000));
+    LOG_ERR("mqtt_live ret: %d", err);
   }
 
   LOG_INF("QUIT\n");
