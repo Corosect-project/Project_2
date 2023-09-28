@@ -3,6 +3,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/net/net_config.h>
 #include <zephyr/net/net_if.h>
+#include <zephyr/kernel.h>
 
 LOG_MODULE_DECLARE(app, LOG_LEVEL_DBG);
 
