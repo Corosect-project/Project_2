@@ -124,7 +124,10 @@ void mqtt_evt_handler(struct mqtt_client *client, const struct mqtt_evt *evt) {
 
 
 
+//Nrf cloud funcionality starts after this
 
+
+//nRF cloud handler
 void cloud_handler(const struct nrf_cloud_evt *evt) {
 
 }
@@ -147,6 +150,17 @@ void initializer_nrf_cloud(){ //Initialize data for nrf_cloud
   //Testing if initializing returns error
   if(error != 0 ) LOG_ERR("Error in initializing of nrf cloud: %d", error);
 
-  
+  //Connecting to nrf cloud
+  nrf_cloud_connect();
+
+}
+
+
+void nrf_send_data_mqtt(uint32_t mqtt_lenght, const void * pointer_mqtt()){
+
+  //Mqtt topic for nRF cloud
+  struct nrf_cloud_topic Nrf_send_mqtt;
+  Nrf_send_mqtt.len = mqtt_lenght;
+  Nrf_send_mqtt.ptr = pointer_mqtt();
 
 }

@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2023 OAMK Corosect-project.
- *
+ * and 2023 OAMK Corosect-project 2. 
+ * nRF cloud functionality added
+ *  
  * SPDX-License-Identifier: MIT
  */
 
@@ -16,6 +18,8 @@
 #include <net/nrf_cloud.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <inttypes.h>
+
 
 LOG_MODULE_REGISTER(app, LOG_LEVEL_DBG);
 
@@ -29,6 +33,11 @@ LOG_MODULE_REGISTER(app, LOG_LEVEL_DBG);
 
 //Define in case you want use nrf_cloud
 #define nrf_cloud 
+
+//Trying to read device id from registery address
+//volatile uint32_t* const memory_device_id = (uint32_t*) 0x06000000;
+
+
 
 volatile bool quit = false;
 static const struct bt_data ad[] = {
@@ -44,8 +53,16 @@ static void bt_disconnected(struct bt_conn *conn, uint8_t reason);
 BT_CONN_CB_DEFINE(con_calbacks) = {.connected = bt_connected, .disconnected = bt_disconnected};
 
 void main(void) {
+
+  
   int32_t err;
   LOG_INF("Hello World! %s", CONFIG_BOARD);
+
+  
+  //Trying to get device address from ficr memory
+  //LOG_INF("Hello World! %ls", nrf_ficr_deviceid_get(memory_device_id) );
+  
+  
 
   if (ERROR(dk_buttons_init(button_handler))) LOG_ERR("Error initializing buttons");
 
@@ -58,7 +75,12 @@ void main(void) {
   LOG_DBG("Continuing");
   init_network(ZEPHYR_ADDR);
   
-  initializer_nrf_cloud();
+
+  #ifdef nrf_cloud
+  //initializer_nrf_cloud(); //nrf cloud initalizing enabling
+  #endif
+
+
   struct mqtt_client *client_ctx = init_mqtt(SERVER_ADDR, SERVER_PORT);
 
   for (size_t i = 0; i < 11; i++) {
@@ -93,13 +115,17 @@ void main(void) {
     //Team id for nRF cloud
     uint8_t team_id[] = "c88885a4-8051-438f-8bbf-359b3f62a586"; 
 
+    //Client id for device
+    uint8_t Client_id[] = "683909493";
+    
     //Data connected to same variable
     uint8_t *data_team_id; 
 
     //Connecting data to same that printed in topic 
-    sprintf(data_team_id, "m/d/${CC:FC:5C:5D:B1:7B}/d2c/%s/%s", team_id, topic);
+    sprintf(data_team_id,"/m/d/${CC:FC:5C:5D:B1:7B}/d2c/%s/%s/${iot:ClientId}", team_id, topic);
     err = send_message(message, data_team_id);
-
+    //err = nrf_send_data_mqtt(uint32_t 12,data_team_id);
+    
     #elif
     uint8_t *message = "Hello world from Zephyr";
     uint8_t *topic = "TEST";
