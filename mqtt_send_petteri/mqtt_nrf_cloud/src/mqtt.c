@@ -138,7 +138,7 @@ void cloud_handler(struct nrf_cloud_evt *evt) {
 
 
 void initializer_nrf_cloud(){ //Initialize data for nrf_cloud
-
+  LOG_INF("Running initializer to nrf cloud");
   //Nrf cloud struct usage
   struct nrf_cloud_init_param Nrf_ble_cloud;
   Nrf_ble_cloud.client_id = NULL; 

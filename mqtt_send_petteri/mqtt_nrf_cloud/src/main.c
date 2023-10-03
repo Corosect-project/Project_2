@@ -34,11 +34,6 @@ LOG_MODULE_REGISTER(app, LOG_LEVEL_DBG);
 //Define in case you want use nrf_cloud
 #define nrf_cloud 
 
-//Trying to read device id from registery address
-//volatile uint32_t* const memory_device_id = (uint32_t*) 0x06000000;
-
-
-
 volatile bool quit = false;
 static const struct bt_data ad[] = {
     BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -71,6 +66,11 @@ void main(void) {
   LOG_DBG("Continuing");
   init_network(ZEPHYR_ADDR);
   
+  #ifdef nrf_cloud //If using nrf cloud
+  LOG_INF("Running nrf cloud initializer");
+  //nrf cloud initalizing enabling and sending topic address to initializer
+  initializer_nrf_cloud(); 
+  #endif
 
 
   struct mqtt_client *client_ctx = init_mqtt(SERVER_ADDR, SERVER_PORT);
@@ -116,9 +116,7 @@ void main(void) {
     //Connecting data to same that printed in topic 
     sprintf(data_team_id,"${mqttTopicPrefix}/m/d/${CC:FC:5C:5D:B1:7B}/d2c/%s/%s/${iot:ClientId}", team_id, topic);
     
-    LOG_INF("Running nrf cloud initializer");
-    //nrf cloud initalizing enabling and sending topic address to initializer
-    initializer_nrf_cloud(); 
+    
     
 
     err = send_message(message, data_team_id);
