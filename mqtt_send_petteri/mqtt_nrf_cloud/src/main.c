@@ -57,10 +57,6 @@ void main(void) {
   
   int32_t err;
   LOG_INF("Hello World! %s", CONFIG_BOARD);
-
-  
-  //Trying to get device address from ficr memory
-  //LOG_INF("Hello World! %ls", nrf_ficr_deviceid_get(memory_device_id) );
   
   
 
@@ -75,10 +71,6 @@ void main(void) {
   LOG_DBG("Continuing");
   init_network(ZEPHYR_ADDR);
   
-
-  #ifdef nrf_cloud
-  //initializer_nrf_cloud(); //nrf cloud initalizing enabling
-  #endif
 
 
   struct mqtt_client *client_ctx = init_mqtt(SERVER_ADDR, SERVER_PORT);
@@ -114,7 +106,7 @@ void main(void) {
 
     //Team id for nRF cloud
     uint8_t team_id[] = "c88885a4-8051-438f-8bbf-359b3f62a586"; 
-
+    
     //Client id for device
     uint8_t Client_id[] = "683909493";
     
@@ -122,7 +114,13 @@ void main(void) {
     uint8_t *data_team_id; 
 
     //Connecting data to same that printed in topic 
-    sprintf(data_team_id,"/m/d/${CC:FC:5C:5D:B1:7B}/d2c/%s/%s/${iot:ClientId}", team_id, topic);
+    sprintf(data_team_id,"${mqttTopicPrefix}/m/d/${CC:FC:5C:5D:B1:7B}/d2c/%s/%s/${iot:ClientId}", team_id, topic);
+    
+    LOG_INF("Running nrf cloud initializer");
+    //nrf cloud initalizing enabling and sending topic address to initializer
+    initializer_nrf_cloud(); 
+    
+
     err = send_message(message, data_team_id);
     //err = nrf_send_data_mqtt(uint32_t 12,data_team_id);
     

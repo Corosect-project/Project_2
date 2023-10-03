@@ -128,8 +128,12 @@ void mqtt_evt_handler(struct mqtt_client *client, const struct mqtt_evt *evt) {
 
 
 //nRF cloud handler
-void cloud_handler(const struct nrf_cloud_evt *evt) {
-
+void cloud_handler(struct nrf_cloud_evt *evt) {
+  evt->type = NRF_CLOUD_EVT_TRANSPORT_CONNECTED;
+  evt->data.len = 15; //Lenght of data
+  //evt->data.ptr = ; //Pointer to data
+  evt->topic.len = 15; //Lenght of topic
+  //evt->topic.ptr = ; //Pointer to topic
 }
 
 
@@ -137,7 +141,8 @@ void initializer_nrf_cloud(){ //Initialize data for nrf_cloud
 
   //Nrf cloud struct usage
   struct nrf_cloud_init_param Nrf_ble_cloud;
-  Nrf_ble_cloud.client_id = "Test";
+  Nrf_ble_cloud.client_id = NULL; 
+  //Set to null unless NRF_CLOUD_CLIENT_ID_SRC_RUNTIME is set
   //Nrf_ble_cloud->event_handler
   Nrf_ble_cloud.event_handler = cloud_handler;
 
