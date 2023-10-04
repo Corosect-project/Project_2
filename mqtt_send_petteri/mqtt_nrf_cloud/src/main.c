@@ -47,14 +47,51 @@ static void bt_disconnected(struct bt_conn *conn, uint8_t reason);
 
 BT_CONN_CB_DEFINE(con_calbacks) = {.connected = bt_connected, .disconnected = bt_disconnected};
 
+//Topics and data getting to program
+struct topic_and_data {
+  uint32_t topic_data_size;
+  uint32_t message_data_size;
+  uint8_t topic_data;
+  uint8_t message_data;
+};
+
+struct topic_and_data nrf_cloud_topic_and_data(){ //nRF cloud topic and data
+
+  struct topic_and_data data; //Data getting to program
+
+  //Message and topic
+  uint8_t * message = "Hello world from Zephyr";
+  uint8_t * topic = "TEST";
+
+  //Team id for nRF cloud
+  uint8_t team_id_topic[] = "c88885a4-8051-438f-8bbf-359b3f62a586"; 
+  
+  //Client id for device
+  //uint8_t client_id_topic[] = "683909493";
+  
+  //Data connect to same variable
+  uint8_t topic_full = ""; 
+
+  //Connecting data to same that printed in topic 
+  sprintf(topic_full,"${mqttTopicPrefix}/m/d/${CC:FC:5C:5D:B1:7B}/d2c/%s/%s/${iot:ClientId}", team_id_topic, &topic);
+
+  //Calculating topic and message size
+  uint32_t topic_size = strlen((const char *)topic_full);
+  uint32_t message_size = strlen(message);
+
+  data.message_data = (uint8_t)message;
+  data.message_data_size = message_size;
+  data.topic_data = topic_full;
+  data.topic_data_size = topic_size;
+  return data;
+}
+
 void main(void) {
 
   
   int32_t err;
   LOG_INF("Hello World! %s", CONFIG_BOARD);
   
-  
-
   if (ERROR(dk_buttons_init(button_handler))) LOG_ERR("Error initializing buttons");
 
   err = bt_enable(NULL);
@@ -68,7 +105,8 @@ void main(void) {
   
   #ifdef nrf_cloud //If using nrf cloud
   LOG_INF("Running nrf cloud initializer");
-  //nrf cloud initalizing enabling and sending topic address to initializer
+  //nrf cloud initalizing and sending topic and message address to initializer
+  //struct topic_and_data data_and_topic_initialize = nrf_cloud_topic_and_data();
   initializer_nrf_cloud(); 
   #endif
 
@@ -101,27 +139,12 @@ void main(void) {
 
     //In case you want to use nRF cloud
     #ifdef nrf_cloud 
-    uint8_t *message = "Hello world from Zephyr";
-    uint8_t *topic = "TEST";
 
-    //Team id for nRF cloud
-    uint8_t team_id[] = "c88885a4-8051-438f-8bbf-359b3f62a586"; 
-    
-    //Client id for device
-    uint8_t Client_id[] = "683909493";
-    
-    //Data connected to same variable
-    uint8_t *data_team_id; 
+    //Getting data_and topic 
+    struct topic_and_data data_to_mqtt = nrf_cloud_topic_and_data();
 
-    //Connecting data to same that printed in topic 
-    sprintf(data_team_id,"${mqttTopicPrefix}/m/d/${CC:FC:5C:5D:B1:7B}/d2c/%s/%s/${iot:ClientId}", team_id, topic);
-    
-    
-    
-
-    err = send_message(message, data_team_id);
-    //err = nrf_send_data_mqtt(uint32_t 12,data_team_id);
-    
+    //err = nrf_cloud_send_data_mqtt(topic_size, data_team_id_topic);
+    err = send_message(&(data_to_mqtt.message_data), &(data_to_mqtt.topic_data));
     #elif
     uint8_t *message = "Hello world from Zephyr";
     uint8_t *topic = "TEST";
@@ -177,4 +200,6 @@ void bt_connected(struct bt_conn *conn, uint8_t err) {
 }
 
 void bt_disconnected(struct bt_conn *conn, uint8_t reason) { LOG_INF("Disconnected, reason %d", reason); }
+
+
 
