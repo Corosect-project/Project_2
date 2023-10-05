@@ -61,7 +61,8 @@ struct mqtt_client *init_mqtt(const char *server_ip, uint32_t port) {
 /**
  * @brief Publish message to specific topic
  *
- * @param msg message string
+ * @param msg message data
+ * @param msg_len message data length
  * @param topic MQTT topic
  * @return 0 or negative error code (Zephyr errno.h)
  */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 OAMK Corosect-project.
+ * Copyright (c) 2023 Astru43.
  *
  * SPDX-License-Identifier: MIT
  */
@@ -18,16 +18,17 @@ LOG_MODULE_REGISTER(app, LOG_LEVEL_DBG);
 
 #include "config.h"
 #include "mqtt.h"
+#include "sensors/gy61.h"
+#include "util.h"
 
-#define ERROR(err) (err < 0)
 #define ZEPHYR_ADDR "2001:db8::1"
 #define SERVER_ADDR "2001:db8::2"
 #define SERVER_PORT 1883
 
 volatile bool quit = false;
 static const struct bt_data ad[] = {
-    BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-    BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(0x1820)),
+  BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
+  BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(0x1820)),
 };
 
 void button_handler(uint32_t state, uint32_t has_changed);
@@ -46,6 +47,8 @@ void main(void) {
   err = bt_enable(NULL);
   if (ERROR(err)) LOG_ERR("Error enabling BT %d", err);
   bt_ready();
+
+  gy61_init();
 
   LOG_DBG("Waiting connection...");
   k_sleep(K_MSEC(30000));
@@ -83,7 +86,8 @@ void main(void) {
     if (err) LOG_ERR("SEND ERROR: %d", err);
   }
 
-  int test = 0;
+  uint16_t gy61_buffer[3] = {0};
+  double gy61_calibrated[3] = {0};
   while (!quit && connected) {
     LOG_DBG("WAITING");
     err = zsock_poll(fds, 1, 5000);
@@ -93,8 +97,9 @@ void main(void) {
         LOG_ERR("%d", err);
       }
     } else if (ERROR(err)) LOG_ERR("%d", errno);
-    send_message(&test, sizeof(int), "TEST");
-    test++;
+
+    gy61_read(gy61_buffer, sizeof(gy61_buffer), gy61_calibrated, sizeof(gy61_calibrated));
+    send_message(gy61_buffer, sizeof(gy61_buffer), "GY61-RAW");
 
     err = mqtt_live(client_ctx);
     LOG_ERR("mqtt_live ret: %d", err);
