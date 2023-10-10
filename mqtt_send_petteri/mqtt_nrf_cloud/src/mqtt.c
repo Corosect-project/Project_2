@@ -18,10 +18,9 @@ static struct mqtt_client client_ctx;
 static struct sockaddr_storage broker;
 
 
-
-
-
 void mqtt_evt_handler(struct mqtt_client *client, const struct mqtt_evt *evt);
+
+
 
 /**
  * @brief Initialize mqtt parameters and set broker ip and port
@@ -127,6 +126,7 @@ void mqtt_evt_handler(struct mqtt_client *client, const struct mqtt_evt *evt) {
 //Nrf cloud funcionality starts after this
 
 
+
 //nRF cloud handler
 void cloud_handler(struct nrf_cloud_evt *evt) {
 
@@ -144,7 +144,22 @@ void cloud_handler(struct nrf_cloud_evt *evt) {
  * mqtt and topic size AND
  * mqtt and topic pointers
 */
-void initializer_nrf_cloud(){ 
+
+
+/*
+How data goes to this function
+
+  uint8_t &data_to_program.message_data,
+  uint32_t data_to_program.message_data_size,
+  uint8_t &data_to_program.topic_data, 
+  uint32_t data_to_program.topic_data_size
+*/
+void initializer_nrf_cloud(void const* message_data, uint32_t message_data_size, void const* topic_data, uint32_t message_topic_size){ 
+
+  void const* msg_data = message_data;
+  uint32_t msg_size = message_data_size;
+  void const* tpc_data = topic_data;
+  uint32_t tpc_size = message_topic_size;
 
   LOG_INF("Running initializer to nrf cloud");
   //Nrf cloud struct usage

@@ -108,7 +108,7 @@ void main(void) {
   //nrf cloud initalizing and sending topic and message address to initializer
   struct topic_and_data data_to_program = nrf_cloud_topic_and_data();
 
-  initializer_nrf_cloud(data_to_program.message_data, data_to_program.message_data_size,data_to_program.topic_data, data_to_program.topic_data_size); 
+  initializer_nrf_cloud(&data_to_program.message_data, data_to_program.message_data_size, &data_to_program.topic_data, data_to_program.topic_data_size); 
   #endif
 
 
