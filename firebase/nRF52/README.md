@@ -5,7 +5,7 @@
 Open nRF connect sdk command line tools and navigate to project
 folder.
 
-To build the project run the folowing command in the project root
+To build the project run the following command in the project root
 (this readme's folder). This will build the project for the
 nRF52840 DK.
 
@@ -87,7 +87,7 @@ Overlay example
 };
 ```
 
-The mapping for the pins on nRF52840 DK is show in the folowing
+The mapping for the pins on nRF52840 DK is show in the following
 table
 
 | GPIO  | Analog pin | DT name        |
