@@ -1,5 +1,24 @@
 # nRF52840 DK and analog sensor
 
+## Building and flashing
+
+Open nRF connect sdk command line tools and navigate to project
+folder.
+
+To build the project run the folowing command in the project root
+(this readme's folder). This will build the project for the
+nRF52840 DK.
+
+```
+west build --build-dir build -b nrf52840dk_nrf52840
+```
+
+After building the project flash it using the following command
+
+```
+west flash --build-dir build
+```
+
 ## Changing sensor pins and analog channel configurations
 
 In this source code there is example code for reading analog
@@ -29,7 +48,7 @@ so our input can be any where between this and VSS.
 
 The range is calculated using this formula
 `Input range = reference / gain`, the available reference options
-for nRF52840 are VDD/4 or internal 0.6V
+for nRF52840 are VDD/4 or internal 0.6V.
 
 nRF52840 SAADC documentaion
 https://infocenter.nordicsemi.com/topic/ps_nrf52840/saadc.html?cp=5_0_0_5_22
