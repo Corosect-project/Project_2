@@ -123,51 +123,42 @@ void mqtt_evt_handler(struct mqtt_client *client, const struct mqtt_evt *evt) {
 
 
 
-//Nrf cloud funcionality starts after this
+//Nrf cloud funcionality starts after this:
 
 
 
 //nRF cloud handler
-void cloud_handler(struct nrf_cloud_evt *evt) {
+void cloud_handler(struct nrf_cloud_evt *evt, void const* msg_data, uint32_t msg_data_size, void const* tpc_data, uint32_t msg_tpc_size) {
 
   evt->type = NRF_CLOUD_EVT_TRANSPORT_CONNECTED;
-  evt->data.len = 15; //Lenght of data
-  //evt->data.ptr = ; //Pointer to data
-  evt->topic.len = 15; //Lenght of topic
-  //evt->topic.ptr = ; //Pointer to topic
+  evt->data.len = msg_data_size; //Lenght of data
+  evt->data.ptr = msg_data; //Pointer to data
+  evt->topic.len = msg_tpc_size; //Lenght of topic
+  evt->topic.ptr = tpc_data; //Pointer to topic
 }
 
 
 
-/* Initialize data for nrf_cloud
- * Needed data for intialize is
- * mqtt and topic size AND
- * mqtt and topic pointers
-*/
-
-
 /*
-How data goes to this function
-
+  Initialize data for nrf_cloud
+  Needed data for intialize is
+  mqtt and topic size AND
+  mqtt and topic pointers
+  How data goes to this function
   uint8_t &data_to_program.message_data,
   uint32_t data_to_program.message_data_size,
   uint8_t &data_to_program.topic_data, 
   uint32_t data_to_program.topic_data_size
 */
-void initializer_nrf_cloud(void const* message_data, uint32_t message_data_size, void const* topic_data, uint32_t message_topic_size){ 
 
-  void const* msg_data = message_data;
-  uint32_t msg_size = message_data_size;
-  void const* tpc_data = topic_data;
-  uint32_t tpc_size = message_topic_size;
+void initializer_nrf_cloud(void const* message_data, uint32_t message_data_size, void const* topic_data, uint32_t message_topic_size){ 
 
   LOG_INF("Running initializer to nrf cloud");
   //Nrf cloud struct usage
   struct nrf_cloud_init_param Nrf_ble_cloud;
   Nrf_ble_cloud.client_id = NULL; 
   //Set to null unless NRF_CLOUD_CLIENT_ID_SRC_RUNTIME is set
-  //Nrf_ble_cloud->event_handler
-  Nrf_ble_cloud.event_handler = cloud_handler;
+  Nrf_ble_cloud.event_handler = cloud_handler(NULL, message_data, message_data_size, topic_data, message_topic_size);
 
   //const struct Nrf_ble_cloud2 *nrf_ble_cloud_final;
   
