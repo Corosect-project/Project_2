@@ -1,4 +1,5 @@
 from typing import Callable
+from threading import Lock
 
 import paho.mqtt.client as mqtt
 
@@ -8,6 +9,7 @@ TopicHandler = Callable[[mqtt.MQTTMessage], None]
 
 
 class MqttHandler:
+    lock = Lock()
     exit: bool = False
     client = mqtt.Client("firebase_forwarder")
     messageHandlers: dict[str, TopicHandler] = {}
@@ -33,19 +35,30 @@ class MqttHandler:
 
     def onConnect(self, client: mqtt.Client, *args):
         client.subscribe("CONTROL")
-        for key in self.messageHandlers:
-            client.subscribe(key)
+        try:
+            self.lock.acquire()
+            for key in self.messageHandlers:
+                client.subscribe(key)
+        finally: 
+            self.lock.release()
 
     def onMessage(self, client: mqtt.Client, _, msg: mqtt.MQTTMessage):
         if msg.topic == "CONTROL" and msg.payload.decode() == "QUIT":
             self.exit = True
             return
-        handler = self.messageHandlers.get(msg.topic)
-        if handler:
-            return handler(msg)
+        try:
+            self.lock.acquire()
+            handler = self.messageHandlers.get(msg.topic)
+            if handler:
+                return handler(msg)
+        finally:
+            self.lock.release()
 
     def addMessageHandler(self, topic: str, handler: TopicHandler):
-        if self.client.is_connected:
-            self.client.subscribe(topic)
-        self.messageHandlers[topic] = handler
-        pass
+        try: 
+            self.lock.acquire()    
+            if self.client.is_connected:
+                self.client.subscribe(topic)
+            self.messageHandlers[topic] = handler
+        finally:
+            self.lock.release()

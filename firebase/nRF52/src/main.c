@@ -49,6 +49,14 @@ void main(void) {
   bt_ready();
 
   gy61_init();
+  // int i = 0; // Loop used for calibration sampling
+  // while (true) {
+  //   if (i++ == 30) return;
+  //   const uint16_t out_raw[3] = {0};
+  //   const double out[3] = {0};
+  //   gy61_read(out_raw, sizeof(out_raw), out, sizeof(out));
+  //   k_msleep(500);
+  // }
 
   LOG_DBG("Waiting connection...");
   k_sleep(K_MSEC(30000));
@@ -100,6 +108,7 @@ void main(void) {
 
     gy61_read(gy61_buffer, sizeof(gy61_buffer), gy61_calibrated, sizeof(gy61_calibrated));
     send_message(gy61_buffer, sizeof(gy61_buffer), "GY61-RAW");
+    send_message(gy61_calibrated, sizeof(gy61_calibrated), "GY61-CALIBRATED");
 
     err = mqtt_live(client_ctx);
     LOG_ERR("mqtt_live ret: %d", err);
