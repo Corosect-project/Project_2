@@ -56,7 +56,7 @@ struct topic_and_data {
 };
 
 struct topic_and_data nrf_cloud_topic_and_data(){ //nRF cloud topic and data
-
+  LOG_INF("Running nrf cloud initializer");
   struct topic_and_data data; //Data getting to program
 
   //Message and topic
@@ -104,7 +104,7 @@ void main(void) {
   init_network(ZEPHYR_ADDR);
   
   #ifdef nrf_cloud //If using nrf cloud
-  LOG_INF("Running nrf cloud initializer");
+  LOG_DBG("Nrf cloud running");
   //nrf cloud initalizing and sending topic and message address to initializer
   struct topic_and_data data_to_program = nrf_cloud_topic_and_data();
 

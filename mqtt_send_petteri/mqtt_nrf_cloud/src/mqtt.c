@@ -127,7 +127,7 @@ void mqtt_evt_handler(struct mqtt_client *client, const struct mqtt_evt *evt) {
 
 
 
-//NRF cloud data initalization
+//NRF cloud data initalization saving
 struct data_nrf_initialize{
 
   void const* msg_ptr; //Message data ptr
@@ -136,9 +136,6 @@ struct data_nrf_initialize{
   uint32_t msg_tpc_size; //Topic ptr
 
 }nrf_cloud_initialize;
-
-
-
 
 
 //nRF cloud handler
