@@ -64,7 +64,7 @@ struct topic_and_data nrf_cloud_topic_and_data(){ //nRF cloud topic and data
   uint8_t * topic = "TEST";
 
   //Team id for nRF cloud
-  uint8_t team_id_topic[] = "c88885a4-8051-438f-8bbf-359b3f62a586"; 
+  uint8_t team_id_topic[] = "prod/c88885a4-8051-438f-8bbf-359b3f62a586"; 
   
   //Client id for device
   //uint8_t client_id_topic[] = "683909493";
