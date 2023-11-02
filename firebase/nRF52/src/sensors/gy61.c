@@ -52,6 +52,15 @@ int gy61_read(uint16_t out_raw[3], size_t out_raw_len, double out[3], size_t out
 
   LOG_DBG("%d, %d, %d", out_raw[0], out_raw[1], out_raw[2]);
 
+  /* Calibration formula
+   * x: Raw sensor value
+   * y: Sensor value converted to decimal acceleration
+   * n: Number of points, same as calculating average
+   *
+   * a = (sum(x*y) - sum(x)sum(y)/n) / (sum(x^2) - sum(x)^2/n)
+   * b = sum(y)/n / a(sum(x)/n)
+   * out = a * out_raw + b
+   */
   out[0] = 0.0266250134946285 * out_raw[0] - 50.0822420503627;
   out[1] = 0.0265549994892716 * out_raw[1] - 49.0641972785777;
   out[2] = 0.0266211855123551 * out_raw[2] - 52.4387070131872;
