@@ -1,0 +1,5 @@
+source "Kconfig.zephyr"
+
+config DISABLE_GY61
+  bool 'Disable gy61 sensor code'
+  default n

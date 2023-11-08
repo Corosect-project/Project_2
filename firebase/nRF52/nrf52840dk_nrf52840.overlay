@@ -39,5 +39,3 @@
     zephyr,input-positive = <NRF_SAADC_AIN4>; // P0.28
   };
 };
-
-

@@ -18,8 +18,12 @@ LOG_MODULE_REGISTER(app, LOG_LEVEL_DBG);
 
 #include "config.h"
 #include "mqtt.h"
-#include "sensors/gy61.h"
 #include "util.h"
+#include "sensors/t67xx.h"
+
+#ifndef CONFIG_DISABLE_GY61
+#include "sensors/gy61.h"
+#endif
 
 #define ZEPHYR_ADDR "2001:db8::1"
 #define SERVER_ADDR "2001:db8::2"
@@ -42,12 +46,14 @@ void main(void) {
   int32_t err;
   LOG_INF("Hello World! %s", CONFIG_BOARD);
 
-  if (ERROR(dk_buttons_init(button_handler))) LOG_ERR("Error initializing buttons");
+  // if (ERROR(dk_buttons_init(button_handler))) LOG_ERR("Error initializing buttons");
 
-  err = bt_enable(NULL);
+  // err = bt_enable(NULL);
   if (ERROR(err)) LOG_ERR("Error enabling BT %d", err);
-  bt_ready();
+  // bt_ready();
 
+  t67xx_init();
+#ifndef CONFIG_DISABLE_GY61
   gy61_init();
   // int i = 0; // Loop used for calibration sampling
   // while (true) {
@@ -57,6 +63,7 @@ void main(void) {
   //   gy61_read(out_raw, sizeof(out_raw), out, sizeof(out));
   //   k_msleep(500);
   // }
+#endif
 
   LOG_DBG("Waiting connection...");
   k_sleep(K_MSEC(30000));
@@ -94,8 +101,10 @@ void main(void) {
     if (err) LOG_ERR("SEND ERROR: %d", err);
   }
 
+#ifndef CONFIG_DISABLE_GY61
   uint16_t gy61_buffer[3] = {0};
   double gy61_calibrated[3] = {0};
+#endif
   while (!quit && connected) {
     LOG_DBG("WAITING");
     err = zsock_poll(fds, 1, 5000);
@@ -106,9 +115,11 @@ void main(void) {
       }
     } else if (ERROR(err)) LOG_ERR("%d", errno);
 
+#ifndef CONFIG_DISABLE_GY61
     gy61_read(gy61_buffer, sizeof(gy61_buffer), gy61_calibrated, sizeof(gy61_calibrated));
     send_message(gy61_buffer, sizeof(gy61_buffer), "GY61-RAW");
     send_message(gy61_calibrated, sizeof(gy61_calibrated), "GY61-CALIBRATED");
+#endif
 
     err = mqtt_live(client_ctx);
     LOG_ERR("mqtt_live ret: %d", err);
