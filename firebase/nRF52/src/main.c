@@ -48,9 +48,9 @@ void main(void) {
 
   // if (ERROR(dk_buttons_init(button_handler))) LOG_ERR("Error initializing buttons");
 
-  // err = bt_enable(NULL);
+  err = bt_enable(NULL);
   if (ERROR(err)) LOG_ERR("Error enabling BT %d", err);
-  // bt_ready();
+  bt_ready();
 
   t67xx_init();
 #ifndef CONFIG_DISABLE_GY61
