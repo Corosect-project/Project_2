@@ -19,7 +19,12 @@ LOG_MODULE_REGISTER(app, LOG_LEVEL_DBG);
 #include "config.h"
 #include "mqtt.h"
 #include "util.h"
+
+#ifdef CONFIG_ENABLE_T67XX_I2C
+#include "sensors/t67xx_i2c.h"
+#elif defined CONFIG_ENABLE_T67XX_PWM
 #include "sensors/t67xx.h"
+#endif
 
 #ifndef CONFIG_DISABLE_GY61
 #include "sensors/gy61.h"
@@ -52,7 +57,24 @@ void main(void) {
   if (ERROR(err)) LOG_ERR("Error enabling BT %d", err);
   bt_ready();
 
+#ifdef CONFIG_ENABLE_T67XX_I2C
+  init_t67xx_i2c();
+  int status;
+  while ((status = t67xx_read_status()) & 0x0c00) {  // Wait for warmup to complete
+    LOG_INF("Warming-up...");
+    LOG_DBG("Status: %04x", status);
+    k_msleep(1000);
+  }
+  LOG_DBG("Status: %04x", status);
+
+  while (true) {
+    uint16_t ppm = t67xx_read_ppm();
+    LOG_INF("PPM %d", ppm);
+    k_msleep(100);
+  }
+#elif defined CONFIG_ENABLE_T67XX_PWM
   t67xx_init();
+#endif
 #ifndef CONFIG_DISABLE_GY61
   gy61_init();
   // int i = 0; // Loop used for calibration sampling

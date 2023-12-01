@@ -1,5 +1,16 @@
 source "Kconfig.zephyr"
 
 config DISABLE_GY61
-  bool 'Disable gy61 sensor code'
+  bool "Disable gy61 sensor code"
   default n
+
+config ENABLE_T67XX_I2C
+  bool "Enable T67XX CO2 sensor using I2C"
+  default n
+  depends on I2C
+
+config ENABLE_T67XX_PWM
+  bool "Enable T67XX CO2 sensor using PWM"
+  default n
+  depends on !ENABLE_T67XX_I2C && \
+    NRFX_GPIOTE && NRFX_TIMER1 && (NRFX_GPIOTE_NUM_OF_EVT_HANDLERS>=2)

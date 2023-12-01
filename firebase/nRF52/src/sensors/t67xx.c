@@ -1,3 +1,5 @@
+#include "t67xx.h"
+
 #include <hal/nrf_gpiote.h>
 #include <nrfx_gpiote.h>
 #include <nrfx_ppi.h>

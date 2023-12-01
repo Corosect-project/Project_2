@@ -39,3 +39,12 @@
     zephyr,input-positive = <NRF_SAADC_AIN4>; // P0.28
   };
 };
+
+&i2c0 {
+  t67xx: t67xx@15 {
+    compatible = "i2c-device";
+    reg = <0x15>;
+    label = "T67XX";
+  };
+};
+
