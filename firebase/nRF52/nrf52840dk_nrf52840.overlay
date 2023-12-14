@@ -43,7 +43,7 @@
 &i2c0 {
   t67xx: t67xx@15 {
     compatible = "i2c-device";
-    reg = <0x15>;
+    reg = <0x15>; // I2C device address
     label = "T67XX";
   };
 };

@@ -1,4 +1,4 @@
-# nRF52840 DK and analog sensor
+# nRF52840 DK and sensor examples
 
 ## Building and flashing
 
@@ -19,7 +19,13 @@ After building the project flash it using the following command
 west flash --build-dir build
 ```
 
+## Wiring diagrams
+
+Wiring diagrams for the examples is located in the repository root at folder called `documents`
+
 ## Changing sensor pins and analog channel configurations
+
+To enable analog sensor set `CONFIG_DISABLE_GY61` in `prj.conf` to `n`
 
 In this source code there is example code for reading analog
 sensor using GY-61 3-Axis accelometer as the analog sensor.
@@ -106,3 +112,37 @@ Last looked up 10.10.2023
 nRF52840 pin map
 https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf52840%2Fpin.html
 Last looked up 10.10.2023
+
+## I2C configuration
+
+To enable I2C set `CONFIG_ENABLE_T67XX_I2C` in `prj.conf` to `y` and `CONFIG_ENABLE_T67XX_PWM` to `n`
+
+There is also example code for communication with T67xx CO2 sensor using PWM and I2C.
+The sensor specific I2C code is found in `/src/sensors/t67xx_i2c.c and .h`
+files.
+
+The pins are decided by the I2C controlles pin configuration and in this example default configuration is uses, the default pins for nRF52840 are `P0.26` and `P0.27`.
+The I2C device address is configured using the same `.overlay`
+files as the ADC, in this project `nrf52840dk_nrf52840.overlay`.
+
+Example of I2C fragment
+
+```dts
+&i2c0 {
+  t67xx: t67xx@15 {
+    compatible = "i2c-device";
+    reg = <0x15>; // I2C device address
+    label = "T67XX";
+  };
+};
+```
+
+To change the device address for this example change the `reg` of the t67xx node and the part after `t67xx@` of the node.
+
+## PWM configuration
+
+To enable PWM set `CONFIG_ENABLE_T67XX_PWM` in `prj.conf` to `y` and `CONFIG_ENABLE_T67XX_I2C` to `n`
+
+The T67xx PWM mode has no easy way to configure. All configurations have to be done by editing the source code directly. The code can be found in `/src/sensors/t67xx.c and .h`.
+
+The pins are configured using two global variable `rising_edge` and `falling_edge` found in the `t67xx.c`
